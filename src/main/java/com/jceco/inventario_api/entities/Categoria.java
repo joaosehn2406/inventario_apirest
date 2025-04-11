@@ -1,11 +1,14 @@
 package com.jceco.inventario_api.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,6 +22,9 @@ public class Categoria implements Serializable{
 	private Long id;
 	
 	private String nome;
+	
+	@OneToMany(mappedBy = "categoria")
+	private Set<Product> products = new HashSet<>();
 	
 	public Categoria() {}
 
@@ -42,6 +48,15 @@ public class Categoria implements Serializable{
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+	
+
+	public Set<Product> getProducts() {
+		return products;
+	}
+
+	public void setProduct(Set<Product> products) {
+		this.products = products;
 	}
 
 	@Override
