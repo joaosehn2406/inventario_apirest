@@ -1,5 +1,8 @@
 package com.jceco.inventario_api.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.jceco.inventario_api.entities.pk.ProductPk;
 
 import jakarta.persistence.EmbeddedId;
@@ -7,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -28,6 +32,9 @@ public class Product {
 	@ManyToOne
 	@JoinColumn(name = "categoria_id")
 	private Categoria categoria;
+	
+	@OneToMany(mappedBy = "produto")
+	private List<Movimentacao> movimentacoes = new ArrayList<>();
 	
 	public Product() {}
 
@@ -89,6 +96,11 @@ public class Product {
 	public void setCategoria(Categoria categoria) {
 		this.categoria = categoria;
 	}
+	
+	public void adicionarMovimentacao(Movimentacao mov) {
+	    movimentacoes.add(mov);
+	    mov.setProduto(this);
+	}
 
 	@Override
 	public int hashCode() {
@@ -115,6 +127,8 @@ public class Product {
 		return true;
 	};
 	
-	
+	public Double getSubtotal() {
+		return getValor() * getqtdeEstoque();
+	}
 	
 }
