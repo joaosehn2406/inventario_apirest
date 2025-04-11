@@ -10,5 +10,6 @@ public interface UsuarioService {
     UsuarioDTO findById(Long id);
     UsuarioDTO insert(UsuarioDTO dto);
     UsuarioDTO update(Long id, UsuarioDTO dto);
+    UsuarioDTO patch(Long id, UsuarioDTO dto);
     void delete(Long id);
 }

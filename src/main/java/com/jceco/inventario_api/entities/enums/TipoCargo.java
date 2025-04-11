@@ -5,7 +5,7 @@ public enum TipoCargo {
 	OPERADOR(1),
 	CAIXA(2),
 	PPCP(3),
-	ADDM(4);
+	ADM(4);
 	
 	private int code;
 	

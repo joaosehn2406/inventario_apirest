@@ -1,5 +1,6 @@
 package com.jceco.inventario_api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jceco.inventario_api.entities.enums.TipoCargo;
 
 public class UsuarioDTO {
@@ -40,6 +41,7 @@ public class UsuarioDTO {
         this.cargo = cargo;
     }
 
+    @JsonIgnore
     public TipoCargo getCargoEnum() {
         if (cargo != null) {
             return TipoCargo.valueOf(cargo);

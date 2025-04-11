@@ -60,4 +60,20 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioDTO toDTO(Usuario entity) {
         return new UsuarioDTO(entity.getId(), entity.getNome(), entity.getCargo());
     }
+
+	@Override
+	public UsuarioDTO patch(Long id, UsuarioDTO dto) {
+		Usuario entity = repository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+		
+		if (dto.getNome() != null) {
+			entity.setNome(dto.getNome());
+		}
+		
+		if (dto.getCargo() != null) {
+			entity.setCargo(dto.getCargoEnum());
+		}
+		
+		return toDTO(repository.save(entity));
+	}
 }

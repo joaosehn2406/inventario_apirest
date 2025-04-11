@@ -21,8 +21,12 @@ public class Movimentacao {
     private TipoMovimentacao tipo; 
 
     @ManyToOne
-    @JoinColumn(name = "produto_id")
+    @JoinColumns({
+        @JoinColumn(name = "produto_id", referencedColumnName = "id"),
+        @JoinColumn(name = "fornecedor_id", referencedColumnName = "fornecedor_id")
+    })
     private Product produto;
+
 
     public Movimentacao() {}
 
