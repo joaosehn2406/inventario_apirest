@@ -5,20 +5,33 @@ import java.io.Serializable;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
-public class ProductPk implements Serializable{
-
+public class ProductPk implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	
 	private Long id;
 	private Long fornecedorId;
-	
+
 	public ProductPk() {}
 
 	public ProductPk(Long id, Long fornecedorId) {
-		super();
 		this.id = id;
+		this.fornecedorId = fornecedorId;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getFornecedorId() {
+		return fornecedorId;
+	}
+
+	public void setFornecedorId(Long fornecedorId) {
 		this.fornecedorId = fornecedorId;
 	}
 
@@ -35,23 +48,23 @@ public class ProductPk implements Serializable{
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (obj == null || getClass() != obj.getClass())
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+
 		ProductPk other = (ProductPk) obj;
-		if (fornecedorId == null) {
-			if (other.fornecedorId != null)
-				return false;
-		} else if (!fornecedorId.equals(other.fornecedorId))
-			return false;
+
 		if (id == null) {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+
+		if (fornecedorId == null) {
+			if (other.fornecedorId != null)
+				return false;
+		} else if (!fornecedorId.equals(other.fornecedorId))
+			return false;
+
 		return true;
-	};
-	
-	
+	}
 }
