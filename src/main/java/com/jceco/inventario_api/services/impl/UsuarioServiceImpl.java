@@ -2,6 +2,7 @@ package com.jceco.inventario_api.services.impl;
 
 import com.jceco.inventario_api.dto.UsuarioDTO;
 import com.jceco.inventario_api.entities.Usuario;
+import com.jceco.inventario_api.exceptions.ResourceNotFoundException;
 import com.jceco.inventario_api.repositories.UsuarioRepository;
 import com.jceco.inventario_api.services.UsuarioService;
 import jakarta.persistence.EntityNotFoundException;
@@ -44,12 +45,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioDTO update(Long id, UsuarioDTO dto) {
-        Usuario entity = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
-        entity.setNome(dto.getNome());
-        entity.setCargo(dto.getCargoEnum());
-        entity = repository.save(entity);
-        return toDTO(entity);
+    	
+    	try {
+    		Usuario entity = repository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+            entity.setNome(dto.getNome());
+            entity.setCargo(dto.getCargoEnum());
+            entity = repository.save(entity);
+            return toDTO(entity);
+    	}
+    	catch(EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
+        
     }
 
     @Override

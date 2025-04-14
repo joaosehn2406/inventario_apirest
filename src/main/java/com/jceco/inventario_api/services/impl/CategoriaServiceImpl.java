@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.jceco.inventario_api.dto.CategoriaDTO;
 import com.jceco.inventario_api.entities.Categoria;
+import com.jceco.inventario_api.exceptions.ResourceNotFoundException;
 import com.jceco.inventario_api.repositories.CategoriaRepository;
 import com.jceco.inventario_api.services.CategoriaService;
 
@@ -53,13 +54,20 @@ public class CategoriaServiceImpl implements CategoriaService{
 	
 	@Override
 	public CategoriaDTO update(Long id, CategoriaDTO cat) {
-		Categoria entity = repository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Problema no update da categoria"));
 		
-		entity.setId(cat.getId());
-		entity.setNome(cat.getNome());
-		repository.save(entity);
-		return toDTO(entity);
+		try {
+			Categoria entity = repository.findById(id)
+					.orElseThrow(() -> new RuntimeException("Problema no update da categoria"));
+			
+			entity.setId(cat.getId());
+			entity.setNome(cat.getNome());
+			repository.save(entity);
+			return toDTO(entity);
+		} 
+		catch(EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
+		
 	}
 	@Override
 	public CategoriaDTO patch(Long id, CategoriaDTO cat) {

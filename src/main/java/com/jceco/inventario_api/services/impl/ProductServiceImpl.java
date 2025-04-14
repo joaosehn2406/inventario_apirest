@@ -11,6 +11,7 @@ import com.jceco.inventario_api.entities.Categoria;
 import com.jceco.inventario_api.entities.Fornecedor;
 import com.jceco.inventario_api.entities.Product;
 import com.jceco.inventario_api.entities.pk.ProductPk;
+import com.jceco.inventario_api.exceptions.ResourceNotFoundException;
 import com.jceco.inventario_api.repositories.CategoriaRepository;
 import com.jceco.inventario_api.repositories.FornecedorRepository;
 import com.jceco.inventario_api.repositories.ProductRepository;
@@ -97,29 +98,37 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
 	public ProductDTO update(Long id, ProductDTO dto) {
-		Product p = repository.findAll().stream()
-				.filter(x -> x.getId().getId().equals(id))
-				.findFirst()
-				.orElseThrow(() -> new EntityNotFoundException());
 		
-		p.setDescricao(dto.getDescricao());
-		p.setValor(dto.getValor());
-		p.setqtdeEstoque(dto.getQtdeEstoque());
-		
-		if (dto.getCategoriaId() != null) {
-			Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+		try {
+			Product p = repository.findAll().stream()
+					.filter(x -> x.getId().getId().equals(id))
+					.findFirst()
 					.orElseThrow(() -> new EntityNotFoundException());
-			p.setCategoria(categoria);
+			
+			p.setDescricao(dto.getDescricao());
+			p.setValor(dto.getValor());
+			p.setqtdeEstoque(dto.getQtdeEstoque());
+			
+			if (dto.getCategoriaId() != null) {
+				Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+						.orElseThrow(() -> new EntityNotFoundException());
+				p.setCategoria(categoria);
+			}
+			
+			if (dto.getFornecedorId() != null) {
+				Fornecedor fornecedor = fornecedorRepository.findById(dto.getFornecedorId())
+						.orElseThrow(() -> new EntityNotFoundException());
+				p.setFornecedor(fornecedor);
+			}
+			
+			repository.save(p);
+			return toDTO(p);
+		}
+		catch(EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
 		}
 		
-		if (dto.getFornecedorId() != null) {
-			Fornecedor fornecedor = fornecedorRepository.findById(dto.getFornecedorId())
-					.orElseThrow(() -> new EntityNotFoundException());
-			p.setFornecedor(fornecedor);
-		}
 		
-		repository.save(p);
-		return toDTO(p);
 		
 	}
 

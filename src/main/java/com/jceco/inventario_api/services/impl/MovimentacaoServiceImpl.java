@@ -7,6 +7,7 @@ import com.jceco.inventario_api.dto.MovimentacaoDTO;
 import com.jceco.inventario_api.entities.Movimentacao;
 import com.jceco.inventario_api.entities.Product;
 import com.jceco.inventario_api.entities.enums.TipoMovimentacao;
+import com.jceco.inventario_api.exceptions.ResourceNotFoundException;
 import com.jceco.inventario_api.repositories.MovimentacaoRepository;
 import com.jceco.inventario_api.repositories.ProductRepository;
 import com.jceco.inventario_api.services.MovimentacaoService;
@@ -74,17 +75,25 @@ public class MovimentacaoServiceImpl implements MovimentacaoService{
 
 	@Override
 	public MovimentacaoDTO update(Long id, MovimentacaoDTO dto) {
-		Movimentacao mov = repository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException());
 		
-		dto.setDescricao(mov.getDescricao());
-		dto.setData(mov.getData());
-		dto.setQuantidade(dto.getQuantidade());
-		dto.setTipo(dto.getTipo());
+		try {
+			Movimentacao mov = repository.findById(id)
+					.orElseThrow(() -> new EntityNotFoundException());
+			
+			dto.setDescricao(mov.getDescricao());
+			dto.setData(mov.getData());
+			dto.setQuantidade(dto.getQuantidade());
+			dto.setTipo(dto.getTipo());
+			
+			mov = repository.save(mov);
+			
+			return toDTO(mov);
+		}
+		catch(EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
 		
-		mov = repository.save(mov);
 		
-		return toDTO(mov);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.jceco.inventario_api.dto.FornecedorDTO;
 import com.jceco.inventario_api.entities.Fornecedor;
+import com.jceco.inventario_api.exceptions.ResourceNotFoundException;
 import com.jceco.inventario_api.repositories.FornecedorRepository;
 import com.jceco.inventario_api.services.FornecedorService;
 
@@ -52,15 +53,22 @@ public class FornecedorServiceImpl implements FornecedorService {
 
 	@Override
 	public FornecedorDTO update(Long id, FornecedorDTO dto) {
-		Fornecedor f = repository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Problena no UPDATE fornecedor"));
 		
-		f.setEmail(dto.getEmail());
-		f.setCnpj(dto.getCnpj());
-		f.setNome(dto.getNome());
-		f.setTelefone(dto.getTelefone());
+		try {
+			Fornecedor f = repository.findById(id)
+					.orElseThrow(() -> new RuntimeException("Problena no UPDATE fornecedor"));
+			
+			f.setEmail(dto.getEmail());
+			f.setCnpj(dto.getCnpj());
+			f.setNome(dto.getNome());
+			f.setTelefone(dto.getTelefone());
+			
+			return toDTO(repository.save(f));
+		}
+		catch(EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
 		
-		return toDTO(repository.save(f));
 	}
 
 	@Override
