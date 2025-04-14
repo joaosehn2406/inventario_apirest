@@ -7,4 +7,5 @@ import com.jceco.inventario_api.entities.Fornecedor;
 
 public interface FornecedorRepository extends JpaRepository<Fornecedor, Long>{
 
+	boolean existsByIdAndProductIsNotEmpty(Long fornecedor);
 }
