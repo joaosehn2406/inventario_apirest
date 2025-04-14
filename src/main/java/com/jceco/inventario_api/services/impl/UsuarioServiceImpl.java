@@ -30,7 +30,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioDTO findById(Long id) {
         Usuario entity = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException(id));
         return toDTO(entity);
     }
 

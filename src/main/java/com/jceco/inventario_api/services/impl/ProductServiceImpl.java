@@ -49,7 +49,7 @@ public class ProductServiceImpl implements ProductService{
 		Product p = repository.findAll().stream()
 				.filter(x -> x.getId().getId().equals(id))
 				.findFirst()
-				.orElseThrow(() -> new EntityNotFoundException());
+				.orElseThrow(() -> new ResourceNotFoundException(id));
 		
 		return toDTO(p);
 	}

@@ -38,7 +38,7 @@ public class CategoriaServiceImpl implements CategoriaService{
 	@Override
 	public CategoriaDTO findById(Long id) {
 		Categoria entity = repository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Deu problema no ID"));
+				.orElseThrow(() -> new ResourceNotFoundException(id));
 		
 		return toDTO(entity);
 	}

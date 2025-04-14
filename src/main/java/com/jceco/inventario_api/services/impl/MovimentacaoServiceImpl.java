@@ -39,7 +39,7 @@ public class MovimentacaoServiceImpl implements MovimentacaoService{
 		Movimentacao mov = repository.findAll().stream()
 				.filter(x -> x.getId().equals(id))
 				.findFirst()
-				.orElseThrow(() -> new EntityNotFoundException());
+				.orElseThrow(() -> new ResourceNotFoundException(id));
 		
 		
 		return toDTO(mov);

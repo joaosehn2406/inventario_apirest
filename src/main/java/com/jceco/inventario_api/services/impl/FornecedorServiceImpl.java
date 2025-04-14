@@ -33,7 +33,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	@Override
 	public FornecedorDTO findById(Long id) {
 		Fornecedor f = repository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Problema no findById"));
+				.orElseThrow(() -> new ResourceNotFoundException(id));
 		
 		return toDTO(f);
 	}
