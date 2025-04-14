@@ -5,12 +5,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import com.jceco.inventario_api.dto.ProductDTO;
 import com.jceco.inventario_api.entities.Categoria;
 import com.jceco.inventario_api.entities.Fornecedor;
 import com.jceco.inventario_api.entities.Product;
 import com.jceco.inventario_api.entities.pk.ProductPk;
+import com.jceco.inventario_api.exceptions.DataBaseException;
 import com.jceco.inventario_api.exceptions.ResourceNotFoundException;
 import com.jceco.inventario_api.repositories.CategoriaRepository;
 import com.jceco.inventario_api.repositories.FornecedorRepository;
@@ -150,9 +153,19 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
 	public void delete(Long id) {
-		Optional<Product> entity = repository.findAll().stream()
-				.filter(x -> x.getId().getId().equals(id))
-				.findFirst();
+		
+		try {
+			Optional<Product> entity = repository.findAll().stream()
+					.filter(x -> x.getId().getId().equals(id))
+					.findFirst();
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException(id);
+		}
+		catch(DataIntegrityViolationException e) {
+			throw new DataBaseException(e.getMessage());
+		}
+		
 		
 		if (entity.isEmpty()) {
             throw new EntityNotFoundException("Produto não encontrado");

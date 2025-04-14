@@ -3,8 +3,12 @@ package com.jceco.inventario_api.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+
 import com.jceco.inventario_api.dto.CategoriaDTO;
 import com.jceco.inventario_api.entities.Categoria;
+import com.jceco.inventario_api.exceptions.DataBaseException;
 import com.jceco.inventario_api.exceptions.ResourceNotFoundException;
 import com.jceco.inventario_api.repositories.CategoriaRepository;
 import com.jceco.inventario_api.services.CategoriaService;
@@ -84,17 +88,16 @@ public class CategoriaServiceImpl implements CategoriaService{
 	
 	@Override
 	public void delete(Long id) {
-	    if (!repository.existsById(id)) {
-	        throw new EntityNotFoundException("Categoria não encontrada");
-	    }
+		try {
+			repository.deleteById(id);
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException(id);
+		}
+		catch(DataIntegrityViolationException e) {
+			throw new DataBaseException(e.getMessage());
+		}
 
-	    if (repository.existsByIdAndProductsIsNotEmpty(id)) {
-	        throw new IllegalStateException("Não é possível excluir uma categoria que possui produtos associados");
-	    }
-
-	    repository.deleteById(id);
 	}
-
-
 	
 }

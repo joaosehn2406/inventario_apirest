@@ -3,8 +3,12 @@ package com.jceco.inventario_api.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+
 import com.jceco.inventario_api.dto.FornecedorDTO;
 import com.jceco.inventario_api.entities.Fornecedor;
+import com.jceco.inventario_api.exceptions.DataBaseException;
 import com.jceco.inventario_api.exceptions.ResourceNotFoundException;
 import com.jceco.inventario_api.repositories.FornecedorRepository;
 import com.jceco.inventario_api.services.FornecedorService;
@@ -97,13 +101,15 @@ public class FornecedorServiceImpl implements FornecedorService {
 
 	@Override
 	public void delete(Long id) {
-		 if (!repository.existsById(id)) {
-		        throw new EntityNotFoundException("Fornecedor não encontrado");
-		    }
-
-		    if (repository.existsByIdAndProductIsNotEmpty(id)) {
-		        throw new IllegalStateException("Não é possível excluir um fornecedor que possui produtos associados");
-		    }
+		try {
+			repository.deleteById(id);
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException(id);
+		}
+		catch(DataIntegrityViolationException e) {
+			throw new DataBaseException(e.getMessage());
+		}
 
 		    repository.deleteById(id);
 	}

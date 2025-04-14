@@ -3,10 +3,14 @@ package com.jceco.inventario_api.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+
 import com.jceco.inventario_api.dto.MovimentacaoDTO;
 import com.jceco.inventario_api.entities.Movimentacao;
 import com.jceco.inventario_api.entities.Product;
 import com.jceco.inventario_api.entities.enums.TipoMovimentacao;
+import com.jceco.inventario_api.exceptions.DataBaseException;
 import com.jceco.inventario_api.exceptions.ResourceNotFoundException;
 import com.jceco.inventario_api.repositories.MovimentacaoRepository;
 import com.jceco.inventario_api.repositories.ProductRepository;
@@ -114,6 +118,16 @@ public class MovimentacaoServiceImpl implements MovimentacaoService{
 
 	@Override
 	public void delete(Long id) {
+		
+		try {
+			repository.deleteById(id);
+		}
+		catch(EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException(id);
+		}
+		catch(DataIntegrityViolationException e) {
+			throw new DataBaseException(e.getMessage());
+		}
 		
 		repository.deleteById(id);
 		
