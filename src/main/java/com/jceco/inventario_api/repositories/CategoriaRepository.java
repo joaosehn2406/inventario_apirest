@@ -8,4 +8,6 @@ import com.jceco.inventario_api.entities.Categoria;
 
 public interface CategoriaRepository extends JpaRepository<Categoria, Long>{
 
+	boolean existsByIdAndProductsIsNotEmpty(Long categoriaId);
+
 }
