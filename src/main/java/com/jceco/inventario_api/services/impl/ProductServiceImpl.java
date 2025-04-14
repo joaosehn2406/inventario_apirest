@@ -54,21 +54,28 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public ProductDTO findByCategory(Categoria cat) {
-		return repository.findByCategoria(cat).stream()
-				.findFirst()
-				.map(this::toDTO)
-				.orElseThrow(() -> new EntityNotFoundException());
-		
+	public ProductDTO findByCategoryId(Long categoriaId) {
+	    Categoria categoria = categoriaRepository.findById(categoriaId)
+	            .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada"));
+
+	    return repository.findByCategoria(categoria).stream()
+	            .findFirst()
+	            .map(this::toDTO)
+	            .orElseThrow(() -> new EntityNotFoundException("Nenhum produto encontrado para a categoria"));
 	}
 
+
 	@Override
-	public ProductDTO findByFornecedor(Fornecedor f) {
-		return repository.findByFornecedor(f).stream()
-				.findFirst()
-				.map(this::toDTO)
-				.orElseThrow(() -> new EntityNotFoundException());
+	public ProductDTO findByFornecedorId(Long fornecedorId) {
+	    Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId)
+	            .orElseThrow(() -> new EntityNotFoundException("Fornecedor não encontrado"));
+
+	    return repository.findByFornecedor(fornecedor).stream()
+	            .findFirst()
+	            .map(this::toDTO)
+	            .orElseThrow(() -> new EntityNotFoundException("Nenhum produto encontrado para o fornecedor"));
 	}
+
 
 	@Override
 	public ProductDTO insert(ProductDTO dto) {
