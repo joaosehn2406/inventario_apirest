@@ -101,9 +101,17 @@ public class Product {
 	}
 	
 	public void adicionarMovimentacao(Movimentacao mov) {
+	 
 	    movimentacoes.add(mov);
-	    mov.setProduto(this);
+	    
+
+	    MovimentacaoProduto movProduto = new MovimentacaoProduto();
+	    movProduto.setProduto(this);
+	    movProduto.setMovimentacao(mov); 
+	    mov.getProdutos().add(movProduto);
 	}
+
+
 
 	@Override
 	public int hashCode() {

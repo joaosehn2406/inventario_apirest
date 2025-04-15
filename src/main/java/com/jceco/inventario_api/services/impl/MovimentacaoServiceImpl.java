@@ -1,16 +1,24 @@
 package com.jceco.inventario_api.services.impl;
 
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.jceco.inventario_api.dto.MovimentacaoDTO;
+import com.jceco.inventario_api.dto.MovimentacaoProdutoDTO;
+
+import com.jceco.inventario_api.entities.Fornecedor;
 import com.jceco.inventario_api.entities.Movimentacao;
+import com.jceco.inventario_api.entities.MovimentacaoProduto;
 import com.jceco.inventario_api.entities.Product;
 import com.jceco.inventario_api.entities.enums.TipoMovimentacao;
+import com.jceco.inventario_api.entities.pk.ProductPk;
 import com.jceco.inventario_api.exceptions.DataBaseException;
 import com.jceco.inventario_api.exceptions.ResourceNotFoundException;
 import com.jceco.inventario_api.repositories.MovimentacaoRepository;
@@ -22,11 +30,17 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class MovimentacaoServiceImpl implements MovimentacaoService{
 
+	@Autowired
 	private MovimentacaoRepository repository;
 	
+	@Autowired
 	private ProductRepository productRepository;
 	
+
 	
+	
+	
+
 	public MovimentacaoServiceImpl(MovimentacaoRepository repository, ProductRepository productRepository) {
 		super();
 		this.repository = repository;
@@ -61,23 +75,50 @@ public class MovimentacaoServiceImpl implements MovimentacaoService{
 
 	@Override
 	public MovimentacaoDTO insert(MovimentacaoDTO dto) {
-		
-		Product product = productRepository.findAll().stream()
-				.filter(p -> p.getId().getId().equals(dto.getProdutoId()))
-				.findFirst()
-				.orElseThrow(() -> new EntityNotFoundException());
-		
-		
-		Movimentacao movimentacao = new Movimentacao();
-		movimentacao.setDescricao(dto.getDescricao());
-		movimentacao.setQuantidade(dto.getQuantidade());
-		movimentacao.setTipo(TipoMovimentacao.valueOf(dto.getTipo()));
-		movimentacao.setProduto(product);
-		
-		movimentacao = repository.save(movimentacao);
-		
-		return toDTO(movimentacao);
+
+	    Movimentacao movimentacao = new Movimentacao();
+	    movimentacao.setDescricao(dto.getDescricao());
+	    movimentacao.setQuantidade(dto.getQuantidade());
+	    movimentacao.setTipo(TipoMovimentacao.valueOf(dto.getTipo()));
+	    movimentacao.setData(LocalDate.now());
+
+
+	    List<MovimentacaoProduto> produtos = dto.getProdutos().stream()
+	        .map(produtoDTO -> {
+
+
+	            ProductPk pk = new ProductPk(produtoDTO.getProdutoId(), produtoDTO.getFornecedorId());
+	            Product product = productRepository.findById(pk)
+	                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado"));
+
+
+	            Fornecedor fornecedor = product.getFornecedor(); 
+
+
+	            MovimentacaoProduto movProd = new MovimentacaoProduto();
+	            movProd.setProduto(product); 
+	            movProd.setQuantidade(produtoDTO.getQuantidade());
+
+
+	            return movProd;
+	        })
+	        .collect(Collectors.toList());
+
+
+	    movimentacao.setProdutos(produtos);
+
+
+	    movimentacao = repository.save(movimentacao);
+
+	    return toDTO(movimentacao);
 	}
+
+
+
+
+
+
+
 
 	@Override
 	public MovimentacaoDTO update(Long id, MovimentacaoDTO dto) {
@@ -136,16 +177,30 @@ public class MovimentacaoServiceImpl implements MovimentacaoService{
 	}
 	
 	private MovimentacaoDTO toDTO(Movimentacao mov) {
+
+	    List<MovimentacaoProdutoDTO> produtosDTO = mov.getProdutos().stream()
+	        .map(produto -> new MovimentacaoProdutoDTO(
+	            produto.getProduto().getId().getId(), 
+	            produto.getQuantidade(),               
+	            produto.getProduto().getDescricao(), 
+	            produto.getProduto().getFornecedor() != null ? produto.getProduto().getFornecedor().getId() : null  
+	        ))
+	        .collect(Collectors.toList());
+
 	    return new MovimentacaoDTO(
-	        mov.getId(),
-	        mov.getDescricao(),
-	        mov.getQuantidade(),
-	        mov.getTipo() != null ? mov.getTipo().name() : null,
-	        mov.getData(),
-	        mov.getProduto() != null ? mov.getProduto().getId().getId() : null,
-	        mov.getProduto() != null ? mov.getProduto().getDescricao() : null
+	        mov.getId(),                            
+	        mov.getDescricao(),                     
+	        mov.getQuantidade(),                    
+	        mov.getTipo() != null ? mov.getTipo().name() : null, 
+	        mov.getData(),                          
+	        produtosDTO                             
 	    );
 	}
+
+
+
+
+
 
 	
 }

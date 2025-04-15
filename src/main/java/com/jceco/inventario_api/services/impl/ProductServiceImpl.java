@@ -81,7 +81,9 @@ public class ProductServiceImpl implements ProductService {
 		Fornecedor fornecedor = fornecedorRepository.findById(dto.getFornecedor().getId())
 				.orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
 
-		ProductPk pk = new ProductPk(dto.getId(), fornecedor.getId());
+		ProductPk pk = new ProductPk();
+		pk.setId(dto.getId());
+	    pk.setFornecedorId(fornecedor.getId());
 
 		Product entity = new Product(pk, dto.getDescricao(), dto.getQtdeEstoque(), dto.getValor(), fornecedor, categoria);
 
