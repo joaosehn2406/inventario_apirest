@@ -44,7 +44,9 @@ A API realiza o gerenciamento completo do **inventário de produtos**, incluindo
 ## 📦 Funcionalidades
 
 ✔️ **Cadastro de Produtos** com informações como nome, quantidade em estoque e valor
+
 ✔️ **Cadastro de Fornecedores** e suas informações de contato (nome, email, telefone, CNPJ)
+
 ✔️ **Cadastro de Categorias** para organizar os produtos
 ✔️ **Movimentações de Estoque** com tipos como entrada e saída de produtos
 ✔️ **Relatórios de Movimentações** por produto ou fornecedor
