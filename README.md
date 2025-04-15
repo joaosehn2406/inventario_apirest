@@ -109,6 +109,9 @@ A API realiza o gerenciamento completo do **inventário de produtos**, incluindo
    ```
 
 4. **Acesse os endpoints** via Postman ou front-end (porta padrão: `http://localhost:8080`).
+  
+
+5. Para **acessar a documentação** digite `http://localhost:8080/swagger-ui/index.html`, após rodar o comando clean install -DskipTests
 
 ---
 
