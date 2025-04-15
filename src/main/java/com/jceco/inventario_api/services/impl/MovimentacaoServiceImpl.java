@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
 
 import com.jceco.inventario_api.dto.MovimentacaoDTO;
 import com.jceco.inventario_api.entities.Movimentacao;
@@ -18,6 +19,7 @@ import com.jceco.inventario_api.services.MovimentacaoService;
 
 import jakarta.persistence.EntityNotFoundException;
 
+@Service
 public class MovimentacaoServiceImpl implements MovimentacaoService{
 
 	private MovimentacaoRepository repository;

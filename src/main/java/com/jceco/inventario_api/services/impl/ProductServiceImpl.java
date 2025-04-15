@@ -5,15 +5,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
 
 import com.jceco.inventario_api.dto.ProductDTO;
 import com.jceco.inventario_api.entities.Categoria;
 import com.jceco.inventario_api.entities.Fornecedor;
 import com.jceco.inventario_api.entities.Product;
 import com.jceco.inventario_api.entities.pk.ProductPk;
-import com.jceco.inventario_api.exceptions.DataBaseException;
 import com.jceco.inventario_api.exceptions.ResourceNotFoundException;
 import com.jceco.inventario_api.repositories.CategoriaRepository;
 import com.jceco.inventario_api.repositories.FornecedorRepository;
@@ -22,7 +20,8 @@ import com.jceco.inventario_api.services.ProductService;
 
 import jakarta.persistence.EntityNotFoundException;
 
-public class ProductServiceImpl implements ProductService{
+@Service
+public class ProductServiceImpl implements ProductService {
 	
 	@Autowired
 	private ProductRepository repository;
@@ -32,7 +31,6 @@ public class ProductServiceImpl implements ProductService{
 	
 	@Autowired
 	private FornecedorRepository fornecedorRepository;
-	
 
 	public ProductServiceImpl(ProductRepository repository) {
 		super();
@@ -44,7 +42,6 @@ public class ProductServiceImpl implements ProductService{
 		return repository.findAll().stream()
 				.map(this::toDTO)
 				.collect(Collectors.toList());
-		
 	}
 
 	@Override
@@ -59,80 +56,65 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
 	public ProductDTO findByCategoryId(Long categoriaId) {
-	    Categoria categoria = categoriaRepository.findById(categoriaId)
-	            .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada"));
-
-	    return repository.findByCategoria(categoria).stream()
-	            .findFirst()
-	            .map(this::toDTO)
-	            .orElseThrow(() -> new EntityNotFoundException("Nenhum produto encontrado para a categoria"));
+		Categoria categoria = categoriaRepository.findById(categoriaId)
+				.orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+		return repository.findByCategoria(categoria).stream()
+				.findFirst()
+				.map(this::toDTO)
+				.orElseThrow(() -> new ResourceNotFoundException("Nenhum produto encontrado para a categoria"));
 	}
-
 
 	@Override
 	public ProductDTO findByFornecedorId(Long fornecedorId) {
-	    Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId)
-	            .orElseThrow(() -> new EntityNotFoundException("Fornecedor não encontrado"));
-
-	    return repository.findByFornecedor(fornecedor).stream()
-	            .findFirst()
-	            .map(this::toDTO)
-	            .orElseThrow(() -> new EntityNotFoundException("Nenhum produto encontrado para o fornecedor"));
+		Fornecedor fornecedor = fornecedorRepository.findById(fornecedorId)
+				.orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
+		return repository.findByFornecedor(fornecedor).stream()
+				.findFirst()
+				.map(this::toDTO)
+				.orElseThrow(() -> new ResourceNotFoundException("Nenhum produto encontrado para o fornecedor"));
 	}
-
 
 	@Override
 	public ProductDTO insert(ProductDTO dto) {
-		Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
-				.orElseThrow(() -> new EntityNotFoundException());
-		
-		Fornecedor fornecedor = fornecedorRepository.findById(dto.getFornecedorId())
-				.orElseThrow(() -> new EntityNotFoundException());
-		
-		ProductPk pk = new ProductPk(dto.getCategoriaId(), dto.getFornecedorId());
-		
+		Categoria categoria = categoriaRepository.findById(dto.getCategoria().getId())
+				.orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+		Fornecedor fornecedor = fornecedorRepository.findById(dto.getFornecedor().getId())
+				.orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
+
+		ProductPk pk = new ProductPk(dto.getId(), fornecedor.getId());
+
 		Product entity = new Product(pk, dto.getDescricao(), dto.getQtdeEstoque(), dto.getValor(), fornecedor, categoria);
-		
+
 		repository.save(entity);
-		
+
 		return toDTO(entity);
-		
 	}
 
 	@Override
 	public ProductDTO update(Long id, ProductDTO dto) {
+		Product p = repository.findAll().stream()
+				.filter(x -> x.getId().getId().equals(id))
+				.findFirst()
+				.orElseThrow(() -> new EntityNotFoundException());
 		
-		try {
-			Product p = repository.findAll().stream()
-					.filter(x -> x.getId().getId().equals(id))
-					.findFirst()
-					.orElseThrow(() -> new EntityNotFoundException());
-			
-			p.setDescricao(dto.getDescricao());
-			p.setValor(dto.getValor());
-			p.setqtdeEstoque(dto.getQtdeEstoque());
-			
-			if (dto.getCategoriaId() != null) {
-				Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
-						.orElseThrow(() -> new EntityNotFoundException());
-				p.setCategoria(categoria);
-			}
-			
-			if (dto.getFornecedorId() != null) {
-				Fornecedor fornecedor = fornecedorRepository.findById(dto.getFornecedorId())
-						.orElseThrow(() -> new EntityNotFoundException());
-				p.setFornecedor(fornecedor);
-			}
-			
-			repository.save(p);
-			return toDTO(p);
+		p.setDescricao(dto.getDescricao());
+		p.setValor(dto.getValor());
+		p.setqtdeEstoque(dto.getQtdeEstoque());
+
+		if (dto.getCategoria() != null) {
+			Categoria categoria = categoriaRepository.findById(dto.getCategoria().getId())
+					.orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada"));
+			p.setCategoria(categoria);
 		}
-		catch(EntityNotFoundException e) {
-			throw new ResourceNotFoundException(id);
+
+		if (dto.getFornecedor() != null) {
+			Fornecedor fornecedor = fornecedorRepository.findById(dto.getFornecedor().getId())
+					.orElseThrow(() -> new ResourceNotFoundException("Fornecedor não encontrado"));
+			p.setFornecedor(fornecedor);
 		}
-		
-		
-		
+
+		repository.save(p);
+		return toDTO(p);
 	}
 
 	@Override
@@ -141,51 +123,37 @@ public class ProductServiceImpl implements ProductService{
 				.filter(x -> x.getId().getId().equals(id))
 				.findFirst()
 				.orElseThrow(() -> new EntityNotFoundException());
-		
-		if(dto.getDescricao() != null) p.setDescricao(dto.getDescricao());
-		if(dto.getValor() != null) p.setValor(dto.getValor());
-		if(dto.getQtdeEstoque() != null) p.setqtdeEstoque(dto.getQtdeEstoque());
-		
+
+		if (dto.getDescricao() != null) p.setDescricao(dto.getDescricao());
+		if (dto.getValor() != null) p.setValor(dto.getValor());
+		if (dto.getQtdeEstoque() != null) p.setqtdeEstoque(dto.getQtdeEstoque());
+
 		repository.save(p);
-		
+
 		return toDTO(p);
 	}
 
 	@Override
 	public void delete(Long id) {
-		
-		try {
-			Optional<Product> entity = repository.findAll().stream()
-					.filter(x -> x.getId().getId().equals(id))
-					.findFirst();
-		}
-		catch(EmptyResultDataAccessException e) {
-			throw new ResourceNotFoundException(id);
-		}
-		catch(DataIntegrityViolationException e) {
-			throw new DataBaseException(e.getMessage());
-		}
-		
+		Optional<Product> entity = repository.findAll().stream()
+				.filter(x -> x.getId().getId().equals(id))
+				.findFirst();
 		
 		if (entity.isEmpty()) {
             throw new EntityNotFoundException("Produto não encontrado");
         }
 		
 		repository.delete(entity.get());
-				
 	}
 	
 	private ProductDTO toDTO(Product product) {
-        return new ProductDTO(
-                product.getId().getId(),
-                product.getDescricao(),
-                product.getqtdeEstoque(),
-                product.getValor(),
-                product.getFornecedor().getId(),
-                product.getFornecedor().getNome(),
-                product.getCategoria().getId(),
-                product.getCategoria().getNome()
-        );
-    }
-	
+		return new ProductDTO(
+			product.getId().getId(),
+			product.getDescricao(),
+			product.getqtdeEstoque(),
+			product.getValor(),
+			product.getFornecedor(),
+			product.getCategoria()
+		);
+	}
 }

@@ -3,6 +3,7 @@ package com.jceco.inventario_api.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jceco.inventario_api.entities.pk.ProductPk;
 
 import jakarta.persistence.EmbeddedId;
@@ -81,6 +82,7 @@ public class Product {
 		this.valor = valor;
 	}
 
+	@JsonIgnore
 	public Fornecedor getFornecedor() {
 		return fornecedor;
 	}
@@ -89,6 +91,7 @@ public class Product {
 		this.fornecedor = fornecedor;
 	}
 
+	@JsonIgnore
 	public Categoria getCategoria() {
 		return categoria;
 	}

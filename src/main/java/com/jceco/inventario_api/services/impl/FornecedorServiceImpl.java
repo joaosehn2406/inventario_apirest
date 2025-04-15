@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Service;
 
 import com.jceco.inventario_api.dto.FornecedorDTO;
 import com.jceco.inventario_api.entities.Fornecedor;
@@ -15,6 +16,7 @@ import com.jceco.inventario_api.services.FornecedorService;
 
 import jakarta.persistence.EntityNotFoundException;
 
+@Service
 public class FornecedorServiceImpl implements FornecedorService {
 
 	
