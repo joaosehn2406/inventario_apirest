@@ -1,4 +1,4 @@
-package com.jceco.inventario_api.controller;
+	package com.jceco.inventario_api.controller;
 
 import java.net.URI;
 import java.util.List;
@@ -47,8 +47,8 @@ public class MovimentacaoController {
 	}
 	
 	@GetMapping("/product/{id}")
-	public ResponseEntity<List<MovimentacaoDTO>> findByProductId(@PathVariable Long prodId) {
-		List<MovimentacaoDTO> mov = service.findByProductId(prodId);
+	public ResponseEntity<List<MovimentacaoDTO>> findByProductId(@PathVariable Long id) {
+		List<MovimentacaoDTO> mov = service.findByProductId(id);
 		return ResponseEntity.ok(mov);
 	}
 	
