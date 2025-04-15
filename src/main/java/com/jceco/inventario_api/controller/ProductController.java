@@ -18,8 +18,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.jceco.inventario_api.dto.ProductDTO;
 import com.jceco.inventario_api.services.impl.ProductServiceImpl;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
+
 @RestController
 @RequestMapping("/products")
+@Tag(name = "Produtos", description = "Endpoint para gerenciar produtos")
 public class ProductController {
 	
 	private ProductServiceImpl service;

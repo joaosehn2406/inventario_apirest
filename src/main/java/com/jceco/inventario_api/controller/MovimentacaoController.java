@@ -1,4 +1,4 @@
-	package com.jceco.inventario_api.controller;
+package com.jceco.inventario_api.controller;
 
 import java.net.URI;
 import java.util.List;
@@ -18,6 +18,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.jceco.inventario_api.dto.MovimentacaoDTO;
 import com.jceco.inventario_api.services.impl.MovimentacaoServiceImpl;
+
+import io.swagger.v3.oas.annotations.Operation;
 
 
 @RestController
@@ -40,12 +42,14 @@ public class MovimentacaoController {
 		return ResponseEntity.ok(mov);
 	}
 	
+	@Operation(summary = "Buscar movimentações por ID do produto", description = "Este endpoint retorna as movimentações de um produto específico.")
 	@GetMapping("/{id}")
 	public ResponseEntity<MovimentacaoDTO> findById(@PathVariable Long id) {
 		MovimentacaoDTO mov = service.findById(id);
 		return ResponseEntity.ok().body(mov);
 	}
 	
+	@Operation(summary = "Criar uma nova movimentação", description = "Este endpoint cria uma nova movimentação de produto.")
 	@GetMapping("/product/{id}")
 	public ResponseEntity<List<MovimentacaoDTO>> findByProductId(@PathVariable Long id) {
 		List<MovimentacaoDTO> mov = service.findByProductId(id);
