@@ -53,7 +53,7 @@ A API realiza o gerenciamento completo do **inventário de produtos**, incluindo
 ✔️ **Controle de Status das Movimentações** como `ENTRADA` ou `SAÍDA`
 ✔️ **Requisições** `POST`, `GET`, `DELETE`, `PUT`, `PATCH` para interagir com a API
 
----
+--
 
 ## 📈 Diferenciais
 
