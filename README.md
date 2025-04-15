@@ -48,11 +48,17 @@ A API realiza o gerenciamento completo do **inventário de produtos**, incluindo
 ✔️ **Cadastro de Fornecedores** e suas informações de contato (nome, email, telefone, CNPJ)
 
 ✔️ **Cadastro de Categorias** para organizar os produtos
+
 ✔️ **Movimentações de Estoque** com tipos como entrada e saída de produtos
+
 ✔️ **Relatórios de Movimentações** por produto ou fornecedor
+
 ✔️ **Cálculo automático do subtotal e total** das movimentações
+
 ✔️ **Autenticação de Usuários** com diferentes tipos de cargos (Operador, Caixa, PPCP, ADM)
+
 ✔️ **Controle de Status das Movimentações** como `ENTRADA` ou `SAÍDA`
+
 ✔️ **Requisições** `POST`, `GET`, `DELETE`, `PUT`, `PATCH` para interagir com a API
 
 --
