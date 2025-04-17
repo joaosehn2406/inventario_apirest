@@ -6,13 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jceco.inventario_api.entities.pk.ProductPk;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tb_produto")
@@ -25,7 +19,7 @@ public class Product {
 	private Integer qtdeEstoque;
 	private Double valor;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@MapsId("fornecedorId")
 	@JoinColumn(name = "fornecedor_id")
 	private Fornecedor fornecedor;
@@ -82,7 +76,6 @@ public class Product {
 		this.valor = valor;
 	}
 
-	@JsonIgnore
 	public Fornecedor getFornecedor() {
 		return fornecedor;
 	}
@@ -91,7 +84,7 @@ public class Product {
 		this.fornecedor = fornecedor;
 	}
 
-	@JsonIgnore
+
 	public Categoria getCategoria() {
 		return categoria;
 	}
