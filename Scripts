@@ -1,0 +1,47 @@
+----- EXEMPLO DE POST -----
+
+Proudct:
+
+{
+    "id": 2,
+  "descricao": "Notebook Dell Latitude 5420",
+  "qtdeEstoque": 42,
+  "valor": 3250.75,
+  "fornecedor": {
+    "id": 1,
+    "nome": "TechSupplier LTDA",
+    "email": "contato@techsupplier.com",
+    "telefone": "+55 11 99876-1234",
+    "cnpj": "12.345.678/0001-90"
+  },
+  "categoria": {
+    "id": 1,
+    "nome": "Informática"
+  }
+}
+
+USUARIO:
+
+
+{
+  "nome": "UsuarioTeste",
+  "cargo": "Teste"
+}
+
+
+CATEGORIAS:
+
+{
+  "nome": "Tecnologia"
+}
+
+
+FORNECEDOR:
+
+
+{
+  "nome": "FornecedorTeste",
+  "email": "for@teste.com.br",
+  "telefone": "55 47 99832-3234",
+  "cnpj": "3232/323286-3232"
+}
